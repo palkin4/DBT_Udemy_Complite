@@ -49,5 +49,8 @@ models:
 data_tests:
   +store_failures: true
 
+vars:
+  user_name: default_user_name
+
   
 

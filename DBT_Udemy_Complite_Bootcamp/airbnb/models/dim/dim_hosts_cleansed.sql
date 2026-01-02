@@ -1,3 +1,4 @@
+{{airbnb.learn_logging()}}
 {{
     config(
         materialized = 'view'
