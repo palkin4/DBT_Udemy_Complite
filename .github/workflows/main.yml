@@ -1,0 +1,14 @@
+name: Branch Name Validation 
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:  
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run a command
+        run: echo "mybranch_name is " ${{github.ref_name}}
