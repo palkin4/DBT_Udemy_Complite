@@ -1,6 +1,11 @@
 name: Branch Name Validation
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ "main" ]
+
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
 
 jobs:
   build:
@@ -13,21 +18,24 @@ jobs:
 
   pr-title-validation:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
 
     steps:
       - name: Validate PR title starts with future/
+        shell: bash
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
 
-          echo "PR title: $PR_TITLE"
+          echo "Raw PR title: '$PR_TITLE'"
 
-          if [[ "$PR_TITLE" != future/* ]]; then
-            echo " Invalid PR title"
+          # normalize (trim spaces + lowercase)
+          PR_TITLE_CLEAN=$(echo "$PR_TITLE" | xargs | tr '[:upper:]' '[:lower:]')
+
+          echo "Normalized PR title: '$PR_TITLE_CLEAN'"
+
+          if [[ ! "$PR_TITLE_CLEAN" =~ ^future/ ]]; then
+            echo "Invalid PR title"
             echo "PR title must start with 'future/'"
             exit 1
           fi
 
-          echo " PR title is valid"
-
-
+          echo "PR title is valid"
