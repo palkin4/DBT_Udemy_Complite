@@ -1,14 +1,33 @@
-name: Branch Name Validation 
+name: Branch Name Validation
 
-on:
-  push:
-    branches: [ "main" ]
+on: [push, pull_request]
 
-jobs:  
+jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
       - name: Run a command
-        run: echo "mybranch_name is " ${{github.ref_name}}
+        run: echo "mybranch_name is ${{ github.ref_name }}"
+
+  pr-title-validation:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Validate PR title starts with future/
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+
+          echo "PR title: $PR_TITLE"
+
+          if [[ "$PR_TITLE" != future/* ]]; then
+            echo " Invalid PR title"
+            echo "PR title must start with 'future/'"
+            exit 1
+          fi
+
+          echo " PR title is valid"
+
+
